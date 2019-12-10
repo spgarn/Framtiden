@@ -1,11 +1,18 @@
 import React from 'react';
 import './App.css';
 import DropDown2 from './DropDown2.js'
-import checkType from './checkType'
 import food from './dataset.json'
 
 const fruit = food.filter(value => value.type === "Fruit")
+
 const vegetable = food.filter(value => value.type === "Vegetable")
+
+function monthsSince(date) {
+  const then = new Date(date).getTime()
+  const now = new Date().getTime()
+  const months = (now - then) / 86400000
+  return Math.floor(months)
+}
 
 
 class App extends React.Component {
@@ -24,6 +31,7 @@ class App extends React.Component {
     this.isAll = this.isAll.bind(this);
     this.isFruits = this.isFruits.bind(this);
     this.isVegetable = this.isVegetable.bind(this);
+    this.checkType = this.checkType.bind(this);
   };
 
 
@@ -62,19 +70,19 @@ class App extends React.Component {
 
   }
   checkType() {
-    if (this.isFruits === true) {
+    if (this.state.isFruits === true) {
       return fruit.map((value) => (
-        <div className="vegtBox" key={value.id}><span>{value.name}</span><span>{value.stocked_at}</span></div>
+        <div className="vegtBox" key={value.id}><span>{value.name}</span><span>{`${monthsSince(value.stocked_at)} Days since stocked`}</span></div>
       ))
     }
-    else if (this.isVegetable === true) {
+    else if (this.state.isVegetable === true) {
       return vegetable.map((value) => (
-        <div className="vegtBox" key={value.id}><span>{value.name}</span><span>{value.stocked_at}</span></div>
+        <div className="vegtBox" key={value.id}><span>{value.name}</span><span>{`${monthsSince(value.stocked_at)} Days since stocked`}</span></div>
       ))
     }
     else {
       return food.map((value) => (
-        <div className="vegtBox" key={value.id}><span>{value.name}</span><span>{value.stocked_at}</span></div>
+        <div className="vegtBox" key={value.id}><span>{value.name}</span><span>{`${monthsSince(value.stocked_at)} Days since stocked`}</span></div>
       ))
     }
   }
@@ -93,9 +101,9 @@ class App extends React.Component {
 
               {this.state.displayMenu ? (
                 <ul>
-                  <li onClick={() => this.isAll}>All</li>
-                  <li onClick={() => this.isVegetable}>Vegtables</li>
-                  <li onClick={() => this.isFruits}>Fruits</li>
+                  <li onClick={() => this.isAll()}>All</li>
+                  <li onClick={() => this.isVegetable()}>Vegtables</li>
+                  <li onClick={() => this.isFruits()}>Fruits</li>
 
                 </ul>
               ) :
@@ -113,7 +121,7 @@ class App extends React.Component {
           </div>
         </div>
         <div className="mediumContainer" >
-          {checkType()}
+          {this.checkType()}
         </div>
 
       </div>
