@@ -1,26 +1,125 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import DropDown2 from './DropDown2.js'
+import checkType from './checkType'
+import food from './dataset.json'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const fruit = food.filter(value => value.type === "Fruit")
+const vegetable = food.filter(value => value.type === "Vegetable")
+
+
+class App extends React.Component {
+  constructor() {
+    super();
+
+
+    this.state = {
+      displayMenu: false,
+      isFruits: false,
+      isVegetable: false,
+    };
+
+    this.showDropdownMenu = this.showDropdownMenu.bind(this);
+    this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
+    this.isAll = this.isAll.bind(this);
+    this.isFruits = this.isFruits.bind(this);
+    this.isVegetable = this.isVegetable.bind(this);
+  };
+
+
+  showDropdownMenu(event) {
+    event.preventDefault();
+    this.setState({ displayMenu: true }, () => {
+      document.addEventListener('click', this.hideDropdownMenu);
+    });
+  }
+
+  hideDropdownMenu() {
+    this.setState({ displayMenu: false }, () => {
+      document.removeEventListener('click', this.hideDropdownMenu);
+    });
+
+  }
+
+  isAll() {
+    this.setState({ displayMenu: false, isFruits: false, isVegetable: false }, () => {
+      document.removeEventListener('click', this.hideDropdownMenu);
+    });
+
+  }
+
+  isFruits() {
+    this.setState({ displayMenu: false, isFruits: true, isVegetable: false }, () => {
+      document.removeEventListener('click', this.hideDropdownMenu);
+    });
+
+  }
+
+  isVegetable() {
+    this.setState({ displayMenu: false, isFruits: false, isVegetable: true }, () => {
+      document.removeEventListener('click', this.hideDropdownMenu);
+    });
+
+  }
+  checkType() {
+    if (this.isFruits === true) {
+      return fruit.map((value) => (
+        <div className="vegtBox" key={value.id}><span>{value.name}</span><span>{value.stocked_at}</span></div>
+      ))
+    }
+    else if (this.isVegetable === true) {
+      return vegetable.map((value) => (
+        <div className="vegtBox" key={value.id}><span>{value.name}</span><span>{value.stocked_at}</span></div>
+      ))
+    }
+    else {
+      return food.map((value) => (
+        <div className="vegtBox" key={value.id}><span>{value.name}</span><span>{value.stocked_at}</span></div>
+      ))
+    }
+  }
+
+
+  render() {
+    return (
+      <div className="bigContainer">
+        <div className="titleContainer">
+          Bosses frukt & grönt
+        </div>
+        <div className="smallContainer">
+          <div className="filterBox">
+            <div className="dropdown">
+              <div className="button" onClick={this.showDropdownMenu}> Type </div>
+
+              {this.state.displayMenu ? (
+                <ul>
+                  <li onClick={() => this.isAll}>All</li>
+                  <li onClick={() => this.isVegetable}>Vegtables</li>
+                  <li onClick={() => this.isFruits}>Fruits</li>
+
+                </ul>
+              ) :
+                (
+                  null
+                )
+              }
+
+            </div>
+
+
+          </div>
+          <div className="filterBox">
+            <DropDown2 />
+          </div>
+        </div>
+        <div className="mediumContainer" >
+          {checkType()}
+        </div>
+
+      </div>
+
+    )
+  }
 }
 
 export default App;
